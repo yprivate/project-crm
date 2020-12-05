@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yang.mapper.ActivityMapper">
+    <sql id="searchSql">
+        <where>
+            <if test="searchMap.name!=null and searchMap.name!=''">
+                and name like '%' #{searchMap.name} '%'
+            </if>
+            <if test="searchMap.owner !=null and searchMap.owner!=''">
+                and owner like '%' #{searchMap.owner} '%'
+            </if>
+            <if test="searchMap.startDate !=null and searchMap.startDate !=''">
+                and startDate like '%' #{searchMap.startDate} '%'
+            </if>
+            <if test="searchMap.endDate !=null and searchMap.endDate !=''">
+                and startDate like '%' #{searchMap.endDate} '%'
+            </if>
+        </where>
+    </sql>
+
+  <select id="getcount" resultType="int">
+      select count(*) from tbl_marketing_activities
+      <include refid="searchSql"></include>
+  </select>
+
+    <select id="getAll" resultType="Activity">
+        select * from tbl_marketing_activities
+        <include refid="searchSql"></include>
+        limit #{totalRows},#{rowsPerPage}
+    </select>
+
+    <insert id="save">
+        insert into tbl_marketing_activities value(
+                                #{id},
+                                #{owner},
+                                #{name},
+                                #{startDate},
+                                #{endDate},
+                                #{cost},
+                                #{description},
+                                #{createBy},
+                                #{createTime},
+                                #{editBy},
+                                #{editTime}
+        )
+    </insert>
+
+    <delete id="delete">
+        delete from tbl_marketing_activities where id in
+        <foreach collection="array" open="(" item="id" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getone" resultType="Activity">
+        select * from tbl_marketing_activities where id=#{id}
+    </select>
+
+    <update id="update">
+        update tbl_marketing_activities set
+                    owner=#{owner},
+                    name=#{name},
+                    startDate=#{startDate},
+                    endDate=#{endDate},
+                    cost=#{cost},
+                    description=#{description},
+                    createBy=#{createBy},
+                    createTime=#{createTime},
+                    editBy=#{editBy},
+                    editTime=#{editTime}
+        where id=#{id}
+    </update>
+
+    <select id="getexport" resultType="Activity">
+        select * from tbl_marketing_activities
+    </select>
+
+    <insert id="saveList">
+        insert into tbl_marketing_activities values
+        <foreach collection="list" item="activity" separator=",">
+            (
+            #{activity.id},
+            #{activity.owner},
+            #{activity.name},
+            #{activity.startDate},
+            #{activity.endDate},
+            #{activity.cost},
+            #{activity.description},
+            #{activity.createBy},
+            #{activity.createTime},
+            #{activity.editBy},
+            #{activity.editTime}
+            )
+        </foreach>
+    </insert>
+</mapper>
