@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yang.mapper.UserMapper">
+
+  	<select id="login" resultType="User">
+        select * from tbl_user where loginAct=#{username} and loginPwd=#{password}
+    </select>
+
+    <select id="autoLogin" resultType="User">
+        select * from tbl_user where loginAct=#{username} and loginPwd=#{password}
+    </select>
+
+    <select id="getAllOwner" resultType="string">
+      SELECT CONCAT(loginAct,'-',name)  FROM `tbl_user`
+    </select>
+
+    <sql id="serSql">
+        from tbl_user a
+        left join tbl_dept b on a.deptId = b.id
+        <where>
+            <if test="searchMap.name !=null and searchMap.name !=''">
+                and a.name like '%' #{searchMap.name} '%'
+            </if>
+            <if test="searchMap.deptId !=null and searchMap.deptId !=''">
+                and b.name like '%' #{searchMap.deptId} '%'
+            </if>
+            <if test="searchMap.lockStatus !=null and searchMap.lockStatus !=''">
+                and a.lockStatus = #{searchMap.lockStatus}
+            </if>
+            <if test="searchMap.expireTime !=null and searchMap.expireTime !=''">
+                and a.expireTime = #{searchMap.expireTime}
+            </if>
+        </where>
+    </sql>
+
+    <resultMap id="userMap" type="User">
+        <id property="id" column="id" />
+        <result property="deptId" column="deptId" />
+        <result property="loginAct" column="loginAct" />
+        <result property="name" column="name" />
+        <result property="loginPwd" column="loginPwd" />
+        <result property="email" column="email" />
+        <result property="expireTime" column="expireTime" />
+        <result property="lockStatus" column="lockStatus" />
+        <result property="allowIps" column="allowIps" />
+        <result property="createBy" column="createBy" />
+        <result property="createTime" column="createTime" />
+        <result property="editBy" column="editBy" />
+        <result property="editTime" column="editTime" />
+
+        <association property="dept" >
+            <result property="id" column="Dept_id" />
+            <result property="no" column="Dept_no" />
+            <result property="name" column="Dept_name" />
+            <result property="manager" column="Dept_manager" />
+            <result property="description" column="Dept_description" />
+            <result property="phone" column="Dept_phone" />
+        </association>
+    </resultMap>
+
+    <select id="getcount" resultType="int">
+        select count(*)
+        <include refid="serSql"></include>
+    </select>
+
+    <select id="getAll" resultMap="userMap">
+        select
+        a.id,
+        a.deptId,
+        a.loginAct,
+        a.name,
+        a.loginPwd,
+        a.email,
+        a.expireTime,
+        a.lockStatus,
+        a.allowIps,
+        a.createBy,
+        a.createTime,
+        a.editBy,
+        a.editTime,
+
+        b.id as Dept_id,
+        b.no as Dept_no,
+        b.name as Dept_name,
+        b.manager as Dept_manager,
+        b.description as Dept_description,
+        b.phone as Dept_phone
+        <include refid="serSql"></include>
+        limit #{startIndex},#{rowsPerPage}
+    </select>
+
+    <insert id="saveadd">
+        insert into tbl_user value (
+                #{id},
+                #{deptId},
+                #{loginAct},
+                #{name},
+                #{loginPwd},
+                #{email},
+                #{expireTime},
+                #{lockStatus},
+                #{allowIps},
+                #{createBy},
+                #{createTime},
+                #{editBy},
+                #{editTime}
+        )
+    </insert>
+
+    <delete id="delete">
+        delete from tbl_user where id in
+        <foreach collection="array" open="(" item="id" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
