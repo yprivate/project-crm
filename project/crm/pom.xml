@@ -8,8 +8,8 @@
   <packaging>war</packaging>  
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
-    <maven.compiler.source>1.8</maven.compiler.source>  
-    <maven.compiler.target>1.8</maven.compiler.target> 
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
   </properties>  
   <dependencies> 
     <!-- SSM:SpringMVC+Spring+MyBatis 其它依赖-->  
@@ -18,7 +18,13 @@
       <groupId>org.springframework</groupId>  
       <artifactId>spring-webmvc</artifactId>  
       <version>5.2.8.RELEASE</version> 
-    </dependency>  
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.3.2</version>
+    </dependency>
     <!--jackson-->  
     <dependency> 
       <groupId>com.fasterxml.jackson.core</groupId>  
